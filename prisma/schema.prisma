@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+   output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  telegramId   Int   @unique  // Telegram user ID (whitelist uchun)
+  username     String?  // Optional Telegram username
+  isWhitelisted Boolean @default(false)  // Whitelist holati
+  createdAt    DateTime @default(now())
+  operations   Operation[]  
+  isSuperUser  Boolean @default(false)
+}
+
+model Operation {
+  id            Int      @id @default(autoincrement())
+  senderPhone     String   // Pul qabul qiluvchi telefon raqami
+  recieverPhone       String   // Pul o'tkaziladigan telefon raqami
+  senderLocation  String   // Qayerdan (masalan, "Samarqand")
+  recieverLocation    String   // Qayerga (masalan, "Toshkent")
+  amount        Int    // Pul miqdori
+  currency      Currency   // Valyuta (masalan, "UZS", "USD")
+  createdAt     DateTime @default(now())  // Operatsiya vaqti (kunlik hisob uchun)
+  userId        Int      // Foydalanuvchi ID si (whitelist tekshirish uchun)
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])  // Kunlik query lar uchun index
+}
+
+enum Currency {
+  UZS
+ USD
+ RUB
+ EUR 
+}
