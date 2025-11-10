@@ -213,7 +213,7 @@ Quyidagi komandalar mavjud:
 📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
 🏙️ <b>Qabul joyi:</b> ${op.recieverLocation}
 💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
-🪙 <b>Komissiya:</b> ${op.isFree ? 'Yo‘q' : 'Ha'}
+🪙 <b>Komissiya:</b> ${op.isFree ? 'Ha' : 'Yo‘q'}
 
 🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
 `;
