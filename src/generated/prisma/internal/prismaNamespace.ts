@@ -619,7 +619,8 @@ export const OperationScalarFieldEnum = {
   amount: 'amount',
   currency: 'currency',
   createdAt: 'createdAt',
-  userId: 'userId'
+  userId: 'userId',
+  isFree: 'isFree'
 } as const
 
 export type OperationScalarFieldEnum = (typeof OperationScalarFieldEnum)[keyof typeof OperationScalarFieldEnum]

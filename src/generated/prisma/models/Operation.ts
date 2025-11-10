@@ -48,6 +48,7 @@ export type OperationMinAggregateOutputType = {
   currency: $Enums.Currency | null
   createdAt: Date | null
   userId: number | null
+  isFree: boolean | null
 }
 
 export type OperationMaxAggregateOutputType = {
@@ -60,6 +61,7 @@ export type OperationMaxAggregateOutputType = {
   currency: $Enums.Currency | null
   createdAt: Date | null
   userId: number | null
+  isFree: boolean | null
 }
 
 export type OperationCountAggregateOutputType = {
@@ -72,6 +74,7 @@ export type OperationCountAggregateOutputType = {
   currency: number
   createdAt: number
   userId: number
+  isFree: number
   _all: number
 }
 
@@ -98,6 +101,7 @@ export type OperationMinAggregateInputType = {
   currency?: true
   createdAt?: true
   userId?: true
+  isFree?: true
 }
 
 export type OperationMaxAggregateInputType = {
@@ -110,6 +114,7 @@ export type OperationMaxAggregateInputType = {
   currency?: true
   createdAt?: true
   userId?: true
+  isFree?: true
 }
 
 export type OperationCountAggregateInputType = {
@@ -122,6 +127,7 @@ export type OperationCountAggregateInputType = {
   currency?: true
   createdAt?: true
   userId?: true
+  isFree?: true
   _all?: true
 }
 
@@ -221,6 +227,7 @@ export type OperationGroupByOutputType = {
   currency: $Enums.Currency
   createdAt: Date
   userId: number
+  isFree: boolean
   _count: OperationCountAggregateOutputType | null
   _avg: OperationAvgAggregateOutputType | null
   _sum: OperationSumAggregateOutputType | null
@@ -256,6 +263,7 @@ export type OperationWhereInput = {
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
+  isFree?: Prisma.BoolFilter<"Operation"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
@@ -269,6 +277,7 @@ export type OperationOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -285,6 +294,7 @@ export type OperationWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
+  isFree?: Prisma.BoolFilter<"Operation"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
@@ -298,6 +308,7 @@ export type OperationOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   _count?: Prisma.OperationCountOrderByAggregateInput
   _avg?: Prisma.OperationAvgOrderByAggregateInput
   _max?: Prisma.OperationMaxOrderByAggregateInput
@@ -318,6 +329,7 @@ export type OperationScalarWhereWithAggregatesInput = {
   currency?: Prisma.EnumCurrencyWithAggregatesFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Operation"> | Date | string
   userId?: Prisma.IntWithAggregatesFilter<"Operation"> | number
+  isFree?: Prisma.BoolWithAggregatesFilter<"Operation"> | boolean
 }
 
 export type OperationCreateInput = {
@@ -328,6 +340,7 @@ export type OperationCreateInput = {
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
+  isFree?: boolean
   user: Prisma.UserCreateNestedOneWithoutOperationsInput
 }
 
@@ -341,6 +354,7 @@ export type OperationUncheckedCreateInput = {
   currency: $Enums.Currency
   createdAt?: Date | string
   userId: number
+  isFree?: boolean
 }
 
 export type OperationUpdateInput = {
@@ -351,6 +365,7 @@ export type OperationUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
 }
 
@@ -364,6 +379,7 @@ export type OperationUncheckedUpdateInput = {
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OperationCreateManyInput = {
@@ -376,6 +392,7 @@ export type OperationCreateManyInput = {
   currency: $Enums.Currency
   createdAt?: Date | string
   userId: number
+  isFree?: boolean
 }
 
 export type OperationUpdateManyMutationInput = {
@@ -386,6 +403,7 @@ export type OperationUpdateManyMutationInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OperationUncheckedUpdateManyInput = {
@@ -398,6 +416,7 @@ export type OperationUncheckedUpdateManyInput = {
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OperationListRelationFilter = {
@@ -420,6 +439,7 @@ export type OperationCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
 }
 
 export type OperationAvgOrderByAggregateInput = {
@@ -438,6 +458,7 @@ export type OperationMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
 }
 
 export type OperationMinOrderByAggregateInput = {
@@ -450,6 +471,7 @@ export type OperationMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
 }
 
 export type OperationSumOrderByAggregateInput = {
@@ -516,6 +538,7 @@ export type OperationCreateWithoutUserInput = {
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
+  isFree?: boolean
 }
 
 export type OperationUncheckedCreateWithoutUserInput = {
@@ -527,6 +550,7 @@ export type OperationUncheckedCreateWithoutUserInput = {
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
+  isFree?: boolean
 }
 
 export type OperationCreateOrConnectWithoutUserInput = {
@@ -568,6 +592,7 @@ export type OperationScalarWhereInput = {
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
+  isFree?: Prisma.BoolFilter<"Operation"> | boolean
 }
 
 export type OperationCreateManyUserInput = {
@@ -579,6 +604,7 @@ export type OperationCreateManyUserInput = {
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
+  isFree?: boolean
 }
 
 export type OperationUpdateWithoutUserInput = {
@@ -589,6 +615,7 @@ export type OperationUpdateWithoutUserInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OperationUncheckedUpdateWithoutUserInput = {
@@ -600,6 +627,7 @@ export type OperationUncheckedUpdateWithoutUserInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OperationUncheckedUpdateManyWithoutUserInput = {
@@ -611,6 +639,7 @@ export type OperationUncheckedUpdateManyWithoutUserInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -625,6 +654,7 @@ export type OperationSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
+  isFree?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
@@ -638,6 +668,7 @@ export type OperationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
+  isFree?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
@@ -651,6 +682,7 @@ export type OperationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
+  isFree?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
@@ -664,9 +696,10 @@ export type OperationSelectScalar = {
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
+  isFree?: boolean
 }
 
-export type OperationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "senderPhone" | "recieverPhone" | "senderLocation" | "recieverLocation" | "amount" | "currency" | "createdAt" | "userId", ExtArgs["result"]["operation"]>
+export type OperationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "senderPhone" | "recieverPhone" | "senderLocation" | "recieverLocation" | "amount" | "currency" | "createdAt" | "userId" | "isFree", ExtArgs["result"]["operation"]>
 export type OperationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -692,6 +725,7 @@ export type $OperationPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     currency: $Enums.Currency
     createdAt: Date
     userId: number
+    isFree: boolean
   }, ExtArgs["result"]["operation"]>
   composites: {}
 }
@@ -1125,6 +1159,7 @@ export interface OperationFieldRefs {
   readonly currency: Prisma.FieldRef<"Operation", 'Currency'>
   readonly createdAt: Prisma.FieldRef<"Operation", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Operation", 'Int'>
+  readonly isFree: Prisma.FieldRef<"Operation", 'Boolean'>
 }
     
 

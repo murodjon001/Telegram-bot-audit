@@ -35,6 +35,7 @@ model Operation {
   createdAt     DateTime @default(now())  // Operatsiya vaqti (kunlik hisob uchun)
   userId        Int      // Foydalanuvchi ID si (whitelist tekshirish uchun)
   user          User     @relation(fields: [userId], references: [id])
+  isFree        Boolean     @default(false)
 
   @@index([createdAt])  // Kunlik query lar uchun index
 }

@@ -1,204 +1,254 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
-import { Injectable } from '@nestjs/common';
-import { Update, Start, Hears, Action, Ctx } from 'nestjs-telegraf';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/config/prisma.service';
-import { Markup, Scenes } from 'telegraf';
-import type { BotContext, MySceneSession } from './bot.type';
-import { Stage, WizardScene } from 'telegraf/typings/scenes';
+import { Telegraf, Context } from 'telegraf';
+import { format } from 'date-fns';
 
-@Update()
 @Injectable()
 export class BotService {
-  private wizard = new WizardScene<BotContext, MySceneSession>(
-    'op_wizard',
-    async (ctx) => {
-      await ctx.reply('Sender telefon:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      if (!ctx.message || !('text' in ctx.message)) return;
-      ctx.wizard.state.senderPhone = ctx.message.text;
-      await ctx.reply('Reciever telefon:');
-      return ctx.wizard.next();
-    },
-    // ... qolgan qadamlar
-  );
+  private readonly logger = new Logger(BotService.name);
+  private readonly bot: Telegraf<Context>;
+  private readonly groupId: string;
 
-  private stage = new Stage<BotContext, MySceneSession>([this.wizard]);
+  constructor(private readonly prisma: PrismaService) {
+    this.bot = new Telegraf(process.env.BOT_TOKEN as string);
+    this.groupId = process.env.TELEGRAM_GROUP_ID as string;
+    console.log(this.groupId);
 
-  // Stage middleware ni tashqariga chiqarish uchun
-  public getStageMiddleware() {
-    return this.stage.middleware();
-  }
+    // --- /start komandasi ---
+    this.bot.start(async (ctx) => {
+      const telegramId = ctx.from?.id;
+      const username = ctx.from?.username || 'foydalanuvchi';
 
-  constructor(private prisma: PrismaService) {}
+      if (!telegramId) return ctx.reply('Xatolik: Telegram ID topilmadi.');
 
-  private async isWhitelisted(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { telegramId: id },
-    });
-    return user?.isWhitelisted ?? false;
-  }
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
 
-  @Start()
-  async start(@Ctx() ctx: BotContext) {
-    await ctx.reply('Salom! /new – operatsiya, /daily – hisob');
-  }
+      if (!user || !user.isWhitelisted) {
+        return ctx.reply(
+          '❌ Sizga bu botdan foydalanishga ruxsat berilmagan.\nIltimos, administrator bilan bog‘laning.',
+        );
+      }
 
-  @Hears('/daily')
-  async daily(@Ctx() ctx: BotContext) {
-    if (!(await this.isWhitelisted(ctx?.from?.id || 0))) {
-      return ctx.reply('Ruxsat yo‘q');
-    }
+      const welcomeMessage = `
+👋 <b>Salom, ${username}!</b>
+Siz tizimga muvaffaqiyatli kirdingiz.
 
-    const today = new Date();
-    const start = new Date(today.setHours(0, 0, 0, 0));
-    const end = new Date(today.setHours(23, 59, 59, 999));
+Quyidagi komandalar mavjud:
+• /report — bugungi hisobotni ko‘rish
+• /shablon_tosh — Toshkent shabloni
+• /shablon_sam — Samarqand shabloni
+`;
 
-    const ops = await this.prisma.operation.findMany({
-      where: { createdAt: { gte: start, lte: end } },
-      select: { amount: true, currency: true },
+      await ctx.reply(welcomeMessage, { parse_mode: 'HTML' });
     });
 
-    const sum: Record<string, number> = {};
-    ops.forEach((o) => (sum[o.currency] = (sum[o.currency] || 0) + o.amount));
+    // --- Shablon komandalar ---
+    this.bot.command('shablon_sam', async (ctx) => {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
+      if (!user || !user.isWhitelisted)
+        return ctx.reply('❌ Sizda ruxsat yo‘q.');
 
-    const report =
-      Object.entries(sum)
-        .map(([c, a]) => `${c}: ${a}`)
-        .join('\n') || 'Yo‘q';
-    await ctx.reply(`Kunlik hisob:\n${report}`);
-  }
+      await ctx.reply(this.usageMessageSam());
+    });
 
-  // WIZARD — session ishlaydi
-  private wizard = new Scenes.WizardScene<any>(
-    'op_wizard',
-    async (ctx) => {
-      await ctx.reply('Sender telefon:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      ctx.scene.session.__scenes = {
-        cursor: 1,
-        state: { senderPhone: ctx.message?.text },
-      };
-      await ctx.reply('Reciever telefon:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      ctx.scene.session.__scenes.state.recieverPhone = ctx.message?.text;
-      await ctx.reply('Qayerdan:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      ctx.scene.session.__scenes.state.senderLocation = ctx.message?.text;
-      await ctx.reply('Qayerga:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      ctx.scene.session.__scenes.state.recieverLocation = ctx.message?.text;
-      await ctx.reply('Miqdor:');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      const amount = parseInt(ctx.message?.text ?? '', 10);
-      if (isNaN(amount) || amount <= 0) return ctx.reply('Noto‘g‘ri! Qayta:');
-      ctx.scene.session.__scenes.state.amount = amount;
-      await ctx.reply('Valyuta (UZS/USD/RUB/EUR):');
-      return ctx.wizard.next();
-    },
-    async (ctx) => {
-      const cur = ctx.message?.text?.toUpperCase().trim();
-      if (!['UZS', 'USD', 'RUB', 'EUR'].includes(cur!))
-        return ctx.reply('Noto‘g‘ri valyuta!');
-      ctx.scene.session.__scenes.state.currency = cur;
+    this.bot.command('shablon_tosh', async (ctx) => {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
+      if (!user || !user.isWhitelisted)
+        return ctx.reply('❌ Sizda ruxsat yo‘q.');
 
-      const s = ctx.scene.session.__scenes.state;
-      await ctx.reply(
-        `Tasdiqlang:\n${s.senderPhone} → ${s.recieverPhone}\n${s.senderLocation} → ${s.recieverLocation}\n${s.amount} ${s.currency}`,
-        Markup.inlineKeyboard([
-          Markup.button.callback('Ha', 'yes'),
-          Markup.button.callback('Yo‘q', 'no'),
-        ]),
+      await ctx.reply(this.usageMessageTosh());
+    });
+
+    // --- /report komandasi ---
+    this.bot.command('report', async (ctx) => {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
+      if (!user || !user.isWhitelisted)
+        return ctx.reply('❌ Sizda ruxsat yo‘q.');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      const operations = await this.prisma.operation.findMany({
+        where: { createdAt: { gte: today, lt: tomorrow } },
+      });
+
+      if (!operations.length)
+        return ctx.reply('📭 Bugun hech qanday operatsiya yo‘q.');
+
+      const totals = operations.reduce(
+        (acc, op) => {
+          acc[op.currency] = (acc[op.currency] || 0) + op.amount;
+          return acc;
+        },
+        {} as Record<string, number>,
       );
-    },
-  );
 
-  @Hears('/new')
-  async newOp(@Ctx() ctx: BotContext) {
-    console.log('new');
+      let reportMsg = `📅 <b>Bugungi (${format(today, 'dd.MM.yyyy')}) hisobot:</b>\n\n`;
+      for (const [currency, total] of Object.entries(totals)) {
+        reportMsg += `💵 <b>${currency}:</b> ${total.toLocaleString()}\n`;
+      }
+      reportMsg += `\n📊 <b>Jami operatsiyalar:</b> ${operations.length}`;
 
-    if (!(await this.isWhitelisted(ctx?.from?.id || 0)))
-      return ctx.reply('Ruxsat yo‘q');
-
-    // console.log(ctx, 'ctx');
-
-    ctx.scene.session.__scenes = {
-      cursor: 0,
-      state: {},
-    };
-
-    console.log(ctx.scene.enter('op_wizard'), 'check');
-
-    return ctx.scene.enter('op_wizard');
-  }
-
-  @Action('yes')
-  async confirm(@Ctx() ctx: BotContext) {
-    const userId = ctx?.from?.id;
-
-    console.log(userId);
-
-    if (!(await this.isWhitelisted(userId || 0))) {
-      return ctx.reply('Ruxsat yo‘q');
-    }
-
-    const s = ctx.wizard.state;
-    if (!s.senderPhone || !s.amount) {
-      return ctx.reply('Ma’lumotlar to‘liq emas. /new');
-    }
-
-    // DB ga saqlash
-    const operation = await this.prisma.operation.create({
-      data: {
-        senderPhone: s.senderPhone,
-        recieverPhone: s.recieverPhone,
-        senderLocation: s.senderLocation!,
-        recieverLocation: s.recieverLocation!,
-        amount: s.amount,
-        currency: s.currency,
-        userId: userId || 1, // Int
-      },
+      await ctx.reply(reportMsg, { parse_mode: 'HTML' });
     });
 
-    // GURUHGA YUBORISH
+    // --- Text xabarlarni qabul qilish (shablon orqali operatsiya yaratish) ---
+    this.bot.on('text', async (ctx) => {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
+      if (!user || !user.isWhitelisted)
+        return ctx.reply('❌ Sizda ruxsat yo‘q.');
+
+      const text = ctx.message.text;
+      const opData = this.parseTemplateText(text);
+
+      // Validator
+      if (
+        !opData.senderPhone ||
+        !opData.recieverPhone ||
+        !opData.amount ||
+        !opData.currency
+      ) {
+        return ctx.reply("❌ Shablon noto‘g‘ri yoki yetarli ma'lumot yo‘q.");
+      }
+
+      // Bazaga yozish
+      const operation = await this.prisma.operation.create({
+        data: {
+          ...opData,
+          userId: user.id,
+        },
+        include: { user: true },
+      });
+
+      // Foydalanuvchiga tasdiq
+      await ctx.reply(this.formatOperationMessage(operation), {
+        parse_mode: 'HTML',
+      });
+
+      // Guruhga yuborish
+      await this.sendOperationToGroup(operation);
+    });
+
+    // Botni ishga tushurish
+    this.bot.launch();
+    this.logger.log('🤖 Telegram bot ishga tushdi!');
+  }
+
+  // --- Usage messages ---
+  private usageMessageSam(): string {
+    return `
+👤 Jo‘natuvchi raqami: 998901234567  
+📞 Qabul qiluvchi raqami: 998917654321  
+📍 Jo‘natuvchi joyi: Samarqand  
+🏙️ Qabul joyi: Toshkent  
+💰 Summasi: 10000  
+💵 Valyuta: USD
+🪙 Komissiya: Ha
+`;
+  }
+
+  private usageMessageTosh(): string {
+    return `
+👤 Jo‘natuvchi raqami: 998901234567  
+📞 Qabul qiluvchi raqami: 998917654321  
+📍 Jo‘natuvchi joyi: Toshkent  
+🏙️ Qabul joyi: Samarqand
+💰 Summasi: 10000  
+💵 Valyuta: USD
+🪙 Komissiya: Ha
+`;
+  }
+
+  private parseTemplateText(text: string) {
+    const lines = text
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const data: any = {};
+
+    for (const line of lines) {
+      if (line.startsWith('👤')) data.senderPhone = line.split(':')[1].trim();
+      else if (line.startsWith('📞'))
+        data.recieverPhone = line.split(':')[1].trim();
+      // Sender location
+      else if (line.startsWith('📍'))
+        data.senderLocation = line.split(':')[1].trim();
+      // Receiver location, qaysi emoji bo‘lishidan qat’i nazar
+      else if (line.includes('Qabul') && line.includes('joy')) {
+        data.recieverLocation = line.split(':')[1].trim();
+      } else if (line.startsWith('💰'))
+        data.amount = parseInt(line.split(':')[1].trim().replace(/,/g, ''), 10);
+      else if (line.startsWith('💵'))
+        data.currency = line.split(':')[1].trim().toUpperCase();
+      else if (line.startsWith('🪙'))
+        data.isFree = line.split(':')[1].trim().toLowerCase() === 'ha';
+    }
+
+    return data;
+  }
+
+  // --- Foydalanuvchiga tasdiq xabar ---
+  private formatOperationMessage(op: any): string {
+    return `
+✅ <b>Operatsiya muvaffaqiyatli qo‘shildi!</b>
+
+👤 <b>Jo‘natuvchi:</b> ${op.senderPhone}
+📞 <b>Qabul qiluvchi:</b> ${op.recieverPhone}
+📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
+🏙️ <b>Qabul joyi:</b> ${op.recieverLocation}
+💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
+🪙 <b>Komissiya:</b> ${op.isFree ? 'Yo‘q' : 'Ha'}
+
+🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
+`;
+  }
+
+  // --- Guruhga xabar yuborish ---
+  private async sendOperationToGroup(op: any) {
+    if (!this.groupId) {
+      this.logger.warn(
+        '⚠️ Guruh ID aniqlanmagan (.env da TELEGRAM_GROUP_ID yo‘q)',
+      );
+      return;
+    }
+
     const groupMessage = `
-Yangi operatsiya!
-ID: ${operation.id}
-${s.senderPhone} → ${s.recieverPhone}
-${s.senderLocation} → ${s.recieverLocation}
-${s.amount} ${s.currency}
-  `.trim();
+📢 <b>Yangi operatsiya!</b>
+
+👤 <b>Foydalanuvchi:</b> ${op.user.username || 'Noma’lum'}
+📞 <b>Jo‘natuvchi:</b> ${op.senderPhone}
+📞 <b>Qabul qiluvchi:</b> ${op.recieverPhone}
+📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
+🏙️ <b>Qabul joyi:</b> ${op.recieverLocation}
+💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
+🪙 <b>Komissiya:</b> ${op.isFree ? 'Ha' : 'Yo‘q'}
+
+🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
+`;
 
     try {
-      await ctx.telegram.sendMessage(process.env.GROUP_CHAT_ID!, groupMessage);
-    } catch (err) {
-      console.error('Guruhga yuborish xatosi:', err);
+      await this.bot.telegram.sendMessage(this.groupId, groupMessage, {
+        parse_mode: 'HTML',
+      });
+      this.logger.log(`📩 Operatsiya guruhga yuborildi (${this.groupId})`);
+    } catch (err: any) {
+      this.logger.error('❌ Guruhga xabar yuborishda xatolik:', err.message);
     }
-
-    await ctx.reply('Saqlandi va guruhga yuborildi!');
-    await ctx.scene.leave();
-  }
-
-  @Action('no')
-  async cancel(@Ctx() ctx: BotContext) {
-    await ctx.reply('Bekor qilindi');
-    await ctx.scene.leave();
   }
 }

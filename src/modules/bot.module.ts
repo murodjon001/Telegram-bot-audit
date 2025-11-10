@@ -1,26 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-// bot.module.ts
-
 import { Module } from '@nestjs/common';
-import { TelegrafModule } from 'nestjs-telegraf';
+// import { ScheduleModule } from '@nestjs/schedule';
 import { BotService } from './bot.service';
-import { session } from 'telegraf';
+import { PrismaService } from 'src/config/prisma.service';
 
 @Module({
-  imports: [
-    TelegrafModule.forRootAsync({
-      useFactory: (botService: BotService) => ({
-        token: process.env.BOT_TOKEN!,
-        middlewares: [
-          session(), // MUTLAQ kerak
-          botService.getStageMiddleware.apply(), // Stage middleware
-        ],
-      }),
-      inject: [BotService],
-    }),
-  ],
-  providers: [BotService],
-  exports: [BotService],
+  // imports: [ScheduleModule.forRoot({})],
+  providers: [BotService, PrismaService],
 })
 export class BotModule {}
