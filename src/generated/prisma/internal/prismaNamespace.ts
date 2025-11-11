@@ -613,14 +613,14 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const OperationScalarFieldEnum = {
   id: 'id',
   senderPhone: 'senderPhone',
-  recieverPhone: 'recieverPhone',
+  receiverPhone: 'receiverPhone',
   senderLocation: 'senderLocation',
-  recieverLocation: 'recieverLocation',
+  receiverLocation: 'receiverLocation',
   amount: 'amount',
   currency: 'currency',
   createdAt: 'createdAt',
   userId: 'userId',
-  isFree: 'isFree'
+  comment: 'comment'
 } as const
 
 export type OperationScalarFieldEnum = (typeof OperationScalarFieldEnum)[keyof typeof OperationScalarFieldEnum]

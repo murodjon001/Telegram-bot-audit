@@ -41,40 +41,40 @@ export type OperationSumAggregateOutputType = {
 export type OperationMinAggregateOutputType = {
   id: number | null
   senderPhone: string | null
-  recieverPhone: string | null
+  receiverPhone: string | null
   senderLocation: string | null
-  recieverLocation: string | null
+  receiverLocation: string | null
   amount: number | null
   currency: $Enums.Currency | null
   createdAt: Date | null
   userId: number | null
-  isFree: boolean | null
+  comment: string | null
 }
 
 export type OperationMaxAggregateOutputType = {
   id: number | null
   senderPhone: string | null
-  recieverPhone: string | null
+  receiverPhone: string | null
   senderLocation: string | null
-  recieverLocation: string | null
+  receiverLocation: string | null
   amount: number | null
   currency: $Enums.Currency | null
   createdAt: Date | null
   userId: number | null
-  isFree: boolean | null
+  comment: string | null
 }
 
 export type OperationCountAggregateOutputType = {
   id: number
   senderPhone: number
-  recieverPhone: number
+  receiverPhone: number
   senderLocation: number
-  recieverLocation: number
+  receiverLocation: number
   amount: number
   currency: number
   createdAt: number
   userId: number
-  isFree: number
+  comment: number
   _all: number
 }
 
@@ -94,40 +94,40 @@ export type OperationSumAggregateInputType = {
 export type OperationMinAggregateInputType = {
   id?: true
   senderPhone?: true
-  recieverPhone?: true
+  receiverPhone?: true
   senderLocation?: true
-  recieverLocation?: true
+  receiverLocation?: true
   amount?: true
   currency?: true
   createdAt?: true
   userId?: true
-  isFree?: true
+  comment?: true
 }
 
 export type OperationMaxAggregateInputType = {
   id?: true
   senderPhone?: true
-  recieverPhone?: true
+  receiverPhone?: true
   senderLocation?: true
-  recieverLocation?: true
+  receiverLocation?: true
   amount?: true
   currency?: true
   createdAt?: true
   userId?: true
-  isFree?: true
+  comment?: true
 }
 
 export type OperationCountAggregateInputType = {
   id?: true
   senderPhone?: true
-  recieverPhone?: true
+  receiverPhone?: true
   senderLocation?: true
-  recieverLocation?: true
+  receiverLocation?: true
   amount?: true
   currency?: true
   createdAt?: true
   userId?: true
-  isFree?: true
+  comment?: true
   _all?: true
 }
 
@@ -220,14 +220,14 @@ export type OperationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type OperationGroupByOutputType = {
   id: number
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt: Date
   userId: number
-  isFree: boolean
+  comment: string | null
   _count: OperationCountAggregateOutputType | null
   _avg: OperationAvgAggregateOutputType | null
   _sum: OperationSumAggregateOutputType | null
@@ -256,28 +256,28 @@ export type OperationWhereInput = {
   NOT?: Prisma.OperationWhereInput | Prisma.OperationWhereInput[]
   id?: Prisma.IntFilter<"Operation"> | number
   senderPhone?: Prisma.StringFilter<"Operation"> | string
-  recieverPhone?: Prisma.StringFilter<"Operation"> | string
+  receiverPhone?: Prisma.StringFilter<"Operation"> | string
   senderLocation?: Prisma.StringFilter<"Operation"> | string
-  recieverLocation?: Prisma.StringFilter<"Operation"> | string
+  receiverLocation?: Prisma.StringFilter<"Operation"> | string
   amount?: Prisma.IntFilter<"Operation"> | number
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
-  isFree?: Prisma.BoolFilter<"Operation"> | boolean
+  comment?: Prisma.StringNullableFilter<"Operation"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type OperationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   senderPhone?: Prisma.SortOrder
-  recieverPhone?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
   senderLocation?: Prisma.SortOrder
-  recieverLocation?: Prisma.SortOrder
+  receiverLocation?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  isFree?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -287,28 +287,28 @@ export type OperationWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.OperationWhereInput[]
   NOT?: Prisma.OperationWhereInput | Prisma.OperationWhereInput[]
   senderPhone?: Prisma.StringFilter<"Operation"> | string
-  recieverPhone?: Prisma.StringFilter<"Operation"> | string
+  receiverPhone?: Prisma.StringFilter<"Operation"> | string
   senderLocation?: Prisma.StringFilter<"Operation"> | string
-  recieverLocation?: Prisma.StringFilter<"Operation"> | string
+  receiverLocation?: Prisma.StringFilter<"Operation"> | string
   amount?: Prisma.IntFilter<"Operation"> | number
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
-  isFree?: Prisma.BoolFilter<"Operation"> | boolean
+  comment?: Prisma.StringNullableFilter<"Operation"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type OperationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   senderPhone?: Prisma.SortOrder
-  recieverPhone?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
   senderLocation?: Prisma.SortOrder
-  recieverLocation?: Prisma.SortOrder
+  receiverLocation?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  isFree?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OperationCountOrderByAggregateInput
   _avg?: Prisma.OperationAvgOrderByAggregateInput
   _max?: Prisma.OperationMaxOrderByAggregateInput
@@ -322,101 +322,101 @@ export type OperationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.OperationScalarWhereWithAggregatesInput | Prisma.OperationScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Operation"> | number
   senderPhone?: Prisma.StringWithAggregatesFilter<"Operation"> | string
-  recieverPhone?: Prisma.StringWithAggregatesFilter<"Operation"> | string
+  receiverPhone?: Prisma.StringWithAggregatesFilter<"Operation"> | string
   senderLocation?: Prisma.StringWithAggregatesFilter<"Operation"> | string
-  recieverLocation?: Prisma.StringWithAggregatesFilter<"Operation"> | string
+  receiverLocation?: Prisma.StringWithAggregatesFilter<"Operation"> | string
   amount?: Prisma.IntWithAggregatesFilter<"Operation"> | number
   currency?: Prisma.EnumCurrencyWithAggregatesFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Operation"> | Date | string
   userId?: Prisma.IntWithAggregatesFilter<"Operation"> | number
-  isFree?: Prisma.BoolWithAggregatesFilter<"Operation"> | boolean
+  comment?: Prisma.StringNullableWithAggregatesFilter<"Operation"> | string | null
 }
 
 export type OperationCreateInput = {
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
-  isFree?: boolean
+  comment?: string | null
   user: Prisma.UserCreateNestedOneWithoutOperationsInput
 }
 
 export type OperationUncheckedCreateInput = {
   id?: number
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
   userId: number
-  isFree?: boolean
+  comment?: string | null
 }
 
 export type OperationUpdateInput = {
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
 }
 
 export type OperationUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OperationCreateManyInput = {
   id?: number
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
   userId: number
-  isFree?: boolean
+  comment?: string | null
 }
 
 export type OperationUpdateManyMutationInput = {
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OperationUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OperationListRelationFilter = {
@@ -432,14 +432,14 @@ export type OperationOrderByRelationAggregateInput = {
 export type OperationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   senderPhone?: Prisma.SortOrder
-  recieverPhone?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
   senderLocation?: Prisma.SortOrder
-  recieverLocation?: Prisma.SortOrder
+  receiverLocation?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  isFree?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type OperationAvgOrderByAggregateInput = {
@@ -451,27 +451,27 @@ export type OperationAvgOrderByAggregateInput = {
 export type OperationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   senderPhone?: Prisma.SortOrder
-  recieverPhone?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
   senderLocation?: Prisma.SortOrder
-  recieverLocation?: Prisma.SortOrder
+  receiverLocation?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  isFree?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type OperationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   senderPhone?: Prisma.SortOrder
-  recieverPhone?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
   senderLocation?: Prisma.SortOrder
-  recieverLocation?: Prisma.SortOrder
+  receiverLocation?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  isFree?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type OperationSumOrderByAggregateInput = {
@@ -532,25 +532,25 @@ export type EnumCurrencyFieldUpdateOperationsInput = {
 
 export type OperationCreateWithoutUserInput = {
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
-  isFree?: boolean
+  comment?: string | null
 }
 
 export type OperationUncheckedCreateWithoutUserInput = {
   id?: number
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
-  isFree?: boolean
+  comment?: string | null
 }
 
 export type OperationCreateOrConnectWithoutUserInput = {
@@ -585,61 +585,61 @@ export type OperationScalarWhereInput = {
   NOT?: Prisma.OperationScalarWhereInput | Prisma.OperationScalarWhereInput[]
   id?: Prisma.IntFilter<"Operation"> | number
   senderPhone?: Prisma.StringFilter<"Operation"> | string
-  recieverPhone?: Prisma.StringFilter<"Operation"> | string
+  receiverPhone?: Prisma.StringFilter<"Operation"> | string
   senderLocation?: Prisma.StringFilter<"Operation"> | string
-  recieverLocation?: Prisma.StringFilter<"Operation"> | string
+  receiverLocation?: Prisma.StringFilter<"Operation"> | string
   amount?: Prisma.IntFilter<"Operation"> | number
   currency?: Prisma.EnumCurrencyFilter<"Operation"> | $Enums.Currency
   createdAt?: Prisma.DateTimeFilter<"Operation"> | Date | string
   userId?: Prisma.IntFilter<"Operation"> | number
-  isFree?: Prisma.BoolFilter<"Operation"> | boolean
+  comment?: Prisma.StringNullableFilter<"Operation"> | string | null
 }
 
 export type OperationCreateManyUserInput = {
   id?: number
   senderPhone: string
-  recieverPhone: string
+  receiverPhone: string
   senderLocation: string
-  recieverLocation: string
+  receiverLocation: string
   amount: number
   currency: $Enums.Currency
   createdAt?: Date | string
-  isFree?: boolean
+  comment?: string | null
 }
 
 export type OperationUpdateWithoutUserInput = {
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OperationUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OperationUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   senderPhone?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverPhone?: Prisma.StringFieldUpdateOperationsInput | string
   senderLocation?: Prisma.StringFieldUpdateOperationsInput | string
-  recieverLocation?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverLocation?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -647,59 +647,59 @@ export type OperationUncheckedUpdateManyWithoutUserInput = {
 export type OperationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   senderPhone?: boolean
-  recieverPhone?: boolean
+  receiverPhone?: boolean
   senderLocation?: boolean
-  recieverLocation?: boolean
+  receiverLocation?: boolean
   amount?: boolean
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
-  isFree?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
 export type OperationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   senderPhone?: boolean
-  recieverPhone?: boolean
+  receiverPhone?: boolean
   senderLocation?: boolean
-  recieverLocation?: boolean
+  receiverLocation?: boolean
   amount?: boolean
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
-  isFree?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
 export type OperationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   senderPhone?: boolean
-  recieverPhone?: boolean
+  receiverPhone?: boolean
   senderLocation?: boolean
-  recieverLocation?: boolean
+  receiverLocation?: boolean
   amount?: boolean
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
-  isFree?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
 export type OperationSelectScalar = {
   id?: boolean
   senderPhone?: boolean
-  recieverPhone?: boolean
+  receiverPhone?: boolean
   senderLocation?: boolean
-  recieverLocation?: boolean
+  receiverLocation?: boolean
   amount?: boolean
   currency?: boolean
   createdAt?: boolean
   userId?: boolean
-  isFree?: boolean
+  comment?: boolean
 }
 
-export type OperationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "senderPhone" | "recieverPhone" | "senderLocation" | "recieverLocation" | "amount" | "currency" | "createdAt" | "userId" | "isFree", ExtArgs["result"]["operation"]>
+export type OperationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "senderPhone" | "receiverPhone" | "senderLocation" | "receiverLocation" | "amount" | "currency" | "createdAt" | "userId" | "comment", ExtArgs["result"]["operation"]>
 export type OperationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -718,14 +718,14 @@ export type $OperationPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     senderPhone: string
-    recieverPhone: string
+    receiverPhone: string
     senderLocation: string
-    recieverLocation: string
+    receiverLocation: string
     amount: number
     currency: $Enums.Currency
     createdAt: Date
     userId: number
-    isFree: boolean
+    comment: string | null
   }, ExtArgs["result"]["operation"]>
   composites: {}
 }
@@ -1152,14 +1152,14 @@ export interface Prisma__OperationClient<T, Null = never, ExtArgs extends runtim
 export interface OperationFieldRefs {
   readonly id: Prisma.FieldRef<"Operation", 'Int'>
   readonly senderPhone: Prisma.FieldRef<"Operation", 'String'>
-  readonly recieverPhone: Prisma.FieldRef<"Operation", 'String'>
+  readonly receiverPhone: Prisma.FieldRef<"Operation", 'String'>
   readonly senderLocation: Prisma.FieldRef<"Operation", 'String'>
-  readonly recieverLocation: Prisma.FieldRef<"Operation", 'String'>
+  readonly receiverLocation: Prisma.FieldRef<"Operation", 'String'>
   readonly amount: Prisma.FieldRef<"Operation", 'Int'>
   readonly currency: Prisma.FieldRef<"Operation", 'Currency'>
   readonly createdAt: Prisma.FieldRef<"Operation", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Operation", 'Int'>
-  readonly isFree: Prisma.FieldRef<"Operation", 'Boolean'>
+  readonly comment: Prisma.FieldRef<"Operation", 'String'>
 }
     
 

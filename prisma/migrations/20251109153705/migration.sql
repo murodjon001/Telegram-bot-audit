@@ -19,7 +19,7 @@ CREATE TABLE "Operation" (
     "senderPhone" TEXT NOT NULL,
     "recieverPhone" TEXT NOT NULL,
     "senderLocation" TEXT NOT NULL,
-    "recieverLocation" TEXT NOT NULL,
+    "receiverLocation" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "currency" "Currency" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -67,8 +67,70 @@ Quyidagi komandalar mavjud:
       await ctx.reply(this.usageMessageTosh());
     });
 
-    // --- /report komandasi ---
-    this.bot.command('report', async (ctx) => {
+    // --- /report_tosh ---
+    this.bot.command('report_tosh', async (ctx) => {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+
+      const user = await this.prisma.user.findUnique({ where: { telegramId } });
+      if (!user || !user.isWhitelisted)
+        return ctx.reply('❌ Sizda ruxsat yo‘q.');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      // 🔹 Faqat bugungi operatsiyalar
+      const operations = await this.prisma.operation.findMany({
+        where: { createdAt: { gte: today, lt: tomorrow } },
+      });
+
+      if (!operations.length)
+        return ctx.reply('📭 Bugun hech qanday operatsiya yo‘q.');
+
+      // Toshkentga kirgan (receiverLocation = Toshkent)
+      const kirim = operations.filter(
+        (op) => op.receiverLocation === 'Toshkent',
+      );
+      // Toshkentdan chiqqan (senderLocation = Toshkent)
+      const chiqim = operations.filter(
+        (op) => op.senderLocation === 'Toshkent',
+      );
+
+      const kirimTotals = kirim.reduce(
+        (acc, op) => {
+          acc[op.currency] = (acc[op.currency] || 0) + op.amount;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+      const chiqimTotals = chiqim.reduce(
+        (acc, op) => {
+          acc[op.currency] = (acc[op.currency] || 0) + op.amount;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+      let reportMsg = `🏙️ <b>Toshkent hisobot (${format(today, 'dd.MM.yyyy')})</b>\n\n`;
+
+      reportMsg += `📥 <b>Kirim (Toshkentga kelgan):</b>\n`;
+      for (const [currency, total] of Object.entries(kirimTotals)) {
+        reportMsg += `  • ${currency}: ${total.toLocaleString()}\n`;
+      }
+
+      reportMsg += `\n📤 <b>Chiqim (Toshkentdan ketgan):</b>\n`;
+      for (const [currency, total] of Object.entries(chiqimTotals)) {
+        reportMsg += `  • ${currency}: ${total.toLocaleString()}\n`;
+      }
+
+      await ctx.reply(reportMsg, { parse_mode: 'HTML' });
+    });
+
+    // --- /report_sam ---
+    this.bot.command('report_sam', async (ctx) => {
       const telegramId = ctx.from?.id;
       if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
 
@@ -88,7 +150,16 @@ Quyidagi komandalar mavjud:
       if (!operations.length)
         return ctx.reply('📭 Bugun hech qanday operatsiya yo‘q.');
 
-      const totals = operations.reduce(
+      // Samarqandga kirgan
+      const kirim = operations.filter(
+        (op) => op.receiverLocation === 'Samarqand',
+      );
+      // Samarqanddan chiqqan
+      const chiqim = operations.filter(
+        (op) => op.senderLocation === 'Samarqand',
+      );
+
+      const kirimTotals = kirim.reduce(
         (acc, op) => {
           acc[op.currency] = (acc[op.currency] || 0) + op.amount;
           return acc;
@@ -96,17 +167,31 @@ Quyidagi komandalar mavjud:
         {} as Record<string, number>,
       );
 
-      let reportMsg = `📅 <b>Bugungi (${format(today, 'dd.MM.yyyy')}) hisobot:</b>\n\n`;
-      for (const [currency, total] of Object.entries(totals)) {
-        reportMsg += `💵 <b>${currency}:</b> ${total.toLocaleString()}\n`;
+      const chiqimTotals = chiqim.reduce(
+        (acc, op) => {
+          acc[op.currency] = (acc[op.currency] || 0) + op.amount;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+      let reportMsg = `📍 <b>Samarqand hisobot (${format(today, 'dd.MM.yyyy')})</b>\n\n`;
+
+      reportMsg += `📥 <b>Kirim (Samarqandga kelgan):</b>\n`;
+      for (const [currency, total] of Object.entries(kirimTotals)) {
+        reportMsg += `  • ${currency}: ${total.toLocaleString()}\n`;
       }
-      reportMsg += `\n📊 <b>Jami operatsiyalar:</b> ${operations.length}`;
+
+      reportMsg += `\n📤 <b>Chiqim (Samarqanddan ketgan):</b>\n`;
+      for (const [currency, total] of Object.entries(chiqimTotals)) {
+        reportMsg += `  • ${currency}: ${total.toLocaleString()}\n`;
+      }
 
       await ctx.reply(reportMsg, { parse_mode: 'HTML' });
     });
 
-    // --- Text xabarlarni qabul qilish (shablon orqali operatsiya yaratish) ---
-    this.bot.on('text', async (ctx) => {
+    // --- /all_report ---
+    this.bot.command('all_report', async (ctx) => {
       const telegramId = ctx.from?.id;
       if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
 
@@ -114,35 +199,92 @@ Quyidagi komandalar mavjud:
       if (!user || !user.isWhitelisted)
         return ctx.reply('❌ Sizda ruxsat yo‘q.');
 
-      const text = ctx.message.text;
-      const opData = this.parseTemplateText(text);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
 
-      // Validator
-      if (
-        !opData.senderPhone ||
-        !opData.recieverPhone ||
-        !opData.amount ||
-        !opData.currency
-      ) {
-        return ctx.reply("❌ Shablon noto‘g‘ri yoki yetarli ma'lumot yo‘q.");
+      const operations = await this.prisma.operation.findMany({
+        where: { createdAt: { gte: today, lt: tomorrow } },
+      });
+
+      if (!operations.length)
+        return ctx.reply('📭 Bugun hech qanday operatsiya yo‘q.');
+
+      // Har bir location bo‘yicha umumiy summani hisoblash
+      const locationTotals: Record<string, Record<string, number>> = {};
+
+      for (const op of operations) {
+        const loc = op.receiverLocation;
+        if (!locationTotals[loc]) locationTotals[loc] = {};
+        locationTotals[loc][op.currency] =
+          (locationTotals[loc][op.currency] || 0) + op.amount;
       }
 
-      // Bazaga yozish
-      const operation = await this.prisma.operation.create({
-        data: {
-          ...opData,
-          userId: user.id,
-        },
-        include: { user: true },
-      });
+      let reportMsg = `🌍 <b>Umumiy kunlik hisobot (${format(today, 'dd.MM.yyyy')})</b>\n\n`;
 
-      // Foydalanuvchiga tasdiq
-      await ctx.reply(this.formatOperationMessage(operation), {
-        parse_mode: 'HTML',
-      });
+      for (const [loc, totals] of Object.entries(locationTotals)) {
+        reportMsg += `🏙️ <b>${loc}:</b>\n`;
+        for (const [currency, total] of Object.entries(totals)) {
+          reportMsg += `  • ${currency}: ${total.toLocaleString()}\n`;
+        }
+        reportMsg += '\n';
+      }
 
-      // Guruhga yuborish
-      await this.sendOperationToGroup(operation);
+      const totalCount = operations.length;
+      reportMsg += `📊 <b>Jami operatsiyalar:</b> ${totalCount}`;
+
+      await ctx.reply(reportMsg, { parse_mode: 'HTML' });
+    });
+
+    // --- Text xabarlarni qabul qilish (shablon orqali operatsiya yaratish) ---
+    this.bot.on('text', async (ctx) => {
+      try {
+        if (ctx.chat.type !== 'private') return;
+
+        const telegramId = ctx.from?.id;
+        if (!telegramId) return ctx.reply('Telegram ID topilmadi.');
+
+        const user = await this.prisma.user.findUnique({
+          where: { telegramId },
+        });
+        if (!user || !user.isWhitelisted)
+          return ctx.reply('❌ Sizda ruxsat yo‘q.');
+
+        const text = ctx.message.text;
+        const opData = this.parseTemplateText(text);
+
+        // Validator
+        if (
+          !opData.senderPhone ||
+          !opData.receiverPhone ||
+          !opData.amount ||
+          !opData.currency
+        ) {
+          return ctx.reply("❌ Shablon noto‘g‘ri yoki yetarli ma'lumot yo‘q.");
+        }
+
+        // Bazaga yozish
+        const operation = await this.prisma.operation.create({
+          data: {
+            ...opData,
+            userId: user.id,
+          },
+          include: { user: true },
+        });
+
+        // // Foydalanuvchiga tasdiq
+        // await ctx.reply(this.formatOperationMessage(operation), {
+        //   parse_mode: 'HTML',
+        // });
+
+        // Guruhga yuborish
+        await this.sendOperationToGroup(operation);
+      } catch (err) {
+        console.log(err);
+
+        return ctx.reply("❌ Shablon noto‘g‘ri yoki yetarli ma'lumot yo‘q.");
+      }
     });
 
     // Botni ishga tushurish
@@ -155,11 +297,14 @@ Quyidagi komandalar mavjud:
     return `
 👤 Jo‘natuvchi raqami: 998901234567  
 📞 Qabul qiluvchi raqami: 998917654321  
-📍 Jo‘natuvchi joyi: Samarqand  
-🏙️ Qabul joyi: Toshkent  
+
+📍 Jo‘natuvchi joyi: SKD  
+🏙️ Qabul joyi: TAS 
+
 💰 Summasi: 10000  
 💵 Valyuta: USD
-🪙 Komissiya: Ha
+
+💬 Izoh: 10$ ol
 `;
   }
 
@@ -167,11 +312,14 @@ Quyidagi komandalar mavjud:
     return `
 👤 Jo‘natuvchi raqami: 998901234567  
 📞 Qabul qiluvchi raqami: 998917654321  
-📍 Jo‘natuvchi joyi: Toshkent  
-🏙️ Qabul joyi: Samarqand
+
+📍 Jo‘natuvchi joyi: TAS  
+🏙️ Qabul joyi: SKD
+
 💰 Summasi: 10000  
 💵 Valyuta: USD
-🪙 Komissiya: Ha
+
+💬 Izoh: 10$ ol
 `;
   }
 
@@ -180,44 +328,72 @@ Quyidagi komandalar mavjud:
       .split('\n')
       .map((l) => l.trim())
       .filter(Boolean);
+
     const data: any = {};
 
     for (const line of lines) {
-      if (line.startsWith('👤')) data.senderPhone = line.split(':')[1].trim();
-      else if (line.startsWith('📞'))
-        data.recieverPhone = line.split(':')[1].trim();
-      // Sender location
-      else if (line.startsWith('📍'))
-        data.senderLocation = line.split(':')[1].trim();
-      // Receiver location, qaysi emoji bo‘lishidan qat’i nazar
+      // 👤 Jo‘natuvchi raqami
+      if (line.startsWith('👤')) {
+        data.senderPhone = line.split(':')[1]?.trim() || '';
+      }
+
+      // 📞 Qabul qiluvchi raqami
+      else if (line.startsWith('📞')) {
+        data.receiverPhone = line.split(':')[1]?.trim() || '';
+      }
+
+      // 📍 Jo‘natuvchi joyi
+      else if (line.startsWith('📍')) {
+        data.senderLocation = line.split(':')[1]?.trim() || '';
+      }
+
+      // 🏙️ Qabul joyi (emoji farqi bo‘lishi mumkin)
       else if (line.includes('Qabul') && line.includes('joy')) {
-        data.recieverLocation = line.split(':')[1].trim();
-      } else if (line.startsWith('💰'))
-        data.amount = parseInt(line.split(':')[1].trim().replace(/,/g, ''), 10);
-      else if (line.startsWith('💵'))
-        data.currency = line.split(':')[1].trim().toUpperCase();
-      else if (line.startsWith('🪙'))
-        data.isFree = line.split(':')[1].trim().toLowerCase() === 'ha';
+        data.receiverLocation = line.split(':')[1]?.trim() || '';
+      }
+
+      // 💰 Summasi
+      else if (line.startsWith('💰')) {
+        const amountRaw = line.split(':')[1]?.trim().replace(/,/g, '') || '0';
+        data.amount = parseInt(amountRaw, 10);
+      }
+
+      // 💵 Valyuta
+      else if (line.startsWith('💵')) {
+        data.currency = line.split(':')[1]?.trim().toUpperCase() || 'UZS';
+      }
+
+      // 💬 Izoh (comment)
+      else if (line.includes('💬')) {
+        const raw = line.split('💬')[1] || '';
+        data.comment = raw
+          .replace(/<[^>]+>/g, '') // HTML teglardan tozalash
+          .replace(/Izoh:?/gi, '') // "Izoh:" so‘zini olib tashlash
+          .replace(/[{}]/g, '') // jingalak qavslarni olib tashlash
+          .replace(/[:>]/g, '') // : va > belgilarini olib tashlash
+          .trim(); // ortiqcha bo‘sh joylarni olib tashlash
+      }
     }
 
     return data;
   }
 
   // --- Foydalanuvchiga tasdiq xabar ---
-  private formatOperationMessage(op: any): string {
-    return `
-✅ <b>Operatsiya muvaffaqiyatli qo‘shildi!</b>
+  //   private formatOperationMessage(op: any): string {
+  //     return `
+  // ✅ <b>Operatsiya muvaffaqiyatli qo‘shildi!</b>
 
-👤 <b>Jo‘natuvchi:</b> ${op.senderPhone}
-📞 <b>Qabul qiluvchi:</b> ${op.recieverPhone}
-📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
-🏙️ <b>Qabul joyi:</b> ${op.recieverLocation}
-💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
-🪙 <b>Komissiya:</b> ${op.isFree ? 'Ha' : 'Yo‘q'}
+  // 👤 <b>Jo‘natuvchi:</b> ${op.senderPhone}
+  // 📞 <b>Qabul qiluvchi:</b> ${op.receiverPhone}
+  // 📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
+  // 🏙️ <b>Qabul joyi:</b> ${op.receiverLocation}
+  // 💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
+  // 🪙 <b>Komissiya:</b> ${op.isNeedcomment ? 'Ha' : 'Yo‘q'}
+  // 💸 Komissiya summasi: ${op.comment}
 
-🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
-`;
-  }
+  // 🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
+  // `;
+  //   }
 
   // --- Guruhga xabar yuborish ---
   private async sendOperationToGroup(op: any) {
@@ -228,18 +404,20 @@ Quyidagi komandalar mavjud:
       return;
     }
 
+    let borderEmoji = '🔷';
+    if (op.receiverLocation === 'TAS') borderEmoji = '🟩';
+    else if (op.receiverLocation === 'SKD') borderEmoji = '🟥';
+
+    const borderLine = borderEmoji.repeat(12);
+    const phone = formatPhone(op.receiverPhone);
+
     const groupMessage = `
-📢 <b>Yangi operatsiya!</b>
+${borderLine}
 
-👤 <b>Foydalanuvchi:</b> ${op.user.username || 'Noma’lum'}
-📞 <b>Jo‘natuvchi:</b> ${op.senderPhone}
-📞 <b>Qabul qiluvchi:</b> ${op.recieverPhone}
-📍 <b>Jo‘natilgan joy:</b> ${op.senderLocation}
-🏙️ <b>Qabul joyi:</b> ${op.recieverLocation}
-💰 <b>Summasi:</b> ${op.amount.toLocaleString()} ${op.currency}
-🪙 <b>Komissiya:</b> ${op.isFree ? 'Ha' : 'Yo‘q'}
-
-🕒 <i>${new Date(op.createdAt).toLocaleString('uz-UZ')}</i>
+<b>${phone}</b>
+<b>${op.senderLocation}</b> ➡️ <b>${op.receiverLocation}</b>
+<b>${op.amount.toLocaleString()} ${op.currency}</b> 
+<b>${op.comment || ''}</b>
 `;
 
     try {
@@ -251,4 +429,15 @@ Quyidagi komandalar mavjud:
       this.logger.error('❌ Guruhga xabar yuborishda xatolik:', err.message);
     }
   }
+}
+function formatPhone(phone: string): string {
+  // Faqat raqamlarni olish
+  const digits = phone.replace(/\D/g, '');
+
+  // Oxirgi 9 raqamni olish (masalan, 998911234567 -> 911234567)
+  const local = digits.slice(-9);
+
+  // Formatlash: 91 123 45 67
+  const formatted = `${local.slice(0, 2)} ${local.slice(2, 5)} ${local.slice(5, 7)} ${local.slice(7, 9)}`;
+  return formatted;
 }

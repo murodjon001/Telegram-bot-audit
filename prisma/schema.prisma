@@ -26,16 +26,16 @@ model User {
 
 model Operation {
   id            Int      @id @default(autoincrement())
-  senderPhone     String   // Pul qabul qiluvchi telefon raqami
-  recieverPhone       String   // Pul o'tkaziladigan telefon raqami
+  senderPhone     String   
+  receiverPhone       String   // Pul o'tkaziladigan telefon raqami
   senderLocation  String   // Qayerdan (masalan, "Samarqand")
-  recieverLocation    String   // Qayerga (masalan, "Toshkent")
+  receiverLocation    String   // Qayerga (masalan, "Toshkent")
   amount        Int    // Pul miqdori
   currency      Currency   // Valyuta (masalan, "UZS", "USD")
   createdAt     DateTime @default(now())  // Operatsiya vaqti (kunlik hisob uchun)
   userId        Int      // Foydalanuvchi ID si (whitelist tekshirish uchun)
   user          User     @relation(fields: [userId], references: [id])
-  isFree        Boolean     @default(false)
+  comment    String?
 
   @@index([createdAt])  // Kunlik query lar uchun index
 }
