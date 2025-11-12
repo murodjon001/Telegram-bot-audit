@@ -28,17 +28,15 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
-  telegramId: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
-  telegramId: number | null
 }
 
 export type UserMinAggregateOutputType = {
   id: number | null
-  telegramId: number | null
+  telegramId: string | null
   username: string | null
   isWhitelisted: boolean | null
   createdAt: Date | null
@@ -47,7 +45,7 @@ export type UserMinAggregateOutputType = {
 
 export type UserMaxAggregateOutputType = {
   id: number | null
-  telegramId: number | null
+  telegramId: string | null
   username: string | null
   isWhitelisted: boolean | null
   createdAt: Date | null
@@ -67,12 +65,10 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   id?: true
-  telegramId?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
-  telegramId?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -191,7 +187,7 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type UserGroupByOutputType = {
   id: number
-  telegramId: number
+  telegramId: string
   username: string | null
   isWhitelisted: boolean
   createdAt: Date
@@ -223,7 +219,7 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.IntFilter<"User"> | number
-  telegramId?: Prisma.IntFilter<"User"> | number
+  telegramId?: Prisma.StringFilter<"User"> | string
   username?: Prisma.StringNullableFilter<"User"> | string | null
   isWhitelisted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -243,7 +239,7 @@ export type UserOrderByWithRelationInput = {
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  telegramId?: number
+  telegramId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -273,7 +269,7 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"User"> | number
-  telegramId?: Prisma.IntWithAggregatesFilter<"User"> | number
+  telegramId?: Prisma.StringWithAggregatesFilter<"User"> | string
   username?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isWhitelisted?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -281,7 +277,7 @@ export type UserScalarWhereWithAggregatesInput = {
 }
 
 export type UserCreateInput = {
-  telegramId: number
+  telegramId: string
   username?: string | null
   isWhitelisted?: boolean
   createdAt?: Date | string
@@ -291,7 +287,7 @@ export type UserCreateInput = {
 
 export type UserUncheckedCreateInput = {
   id?: number
-  telegramId: number
+  telegramId: string
   username?: string | null
   isWhitelisted?: boolean
   createdAt?: Date | string
@@ -300,7 +296,7 @@ export type UserUncheckedCreateInput = {
 }
 
 export type UserUpdateInput = {
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -310,7 +306,7 @@ export type UserUpdateInput = {
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -320,7 +316,7 @@ export type UserUncheckedUpdateInput = {
 
 export type UserCreateManyInput = {
   id?: number
-  telegramId: number
+  telegramId: string
   username?: string | null
   isWhitelisted?: boolean
   createdAt?: Date | string
@@ -328,7 +324,7 @@ export type UserCreateManyInput = {
 }
 
 export type UserUpdateManyMutationInput = {
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -337,7 +333,7 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -355,7 +351,6 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  telegramId?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -378,7 +373,6 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  telegramId?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -386,12 +380,8 @@ export type UserScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type StringFieldUpdateOperationsInput = {
+  set?: string
 }
 
 export type NullableStringFieldUpdateOperationsInput = {
@@ -404,6 +394,14 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type UserCreateNestedOneWithoutOperationsInput = {
@@ -421,7 +419,7 @@ export type UserUpdateOneRequiredWithoutOperationsNestedInput = {
 }
 
 export type UserCreateWithoutOperationsInput = {
-  telegramId: number
+  telegramId: string
   username?: string | null
   isWhitelisted?: boolean
   createdAt?: Date | string
@@ -430,7 +428,7 @@ export type UserCreateWithoutOperationsInput = {
 
 export type UserUncheckedCreateWithoutOperationsInput = {
   id?: number
-  telegramId: number
+  telegramId: string
   username?: string | null
   isWhitelisted?: boolean
   createdAt?: Date | string
@@ -454,7 +452,7 @@ export type UserUpdateToOneWithWhereWithoutOperationsInput = {
 }
 
 export type UserUpdateWithoutOperationsInput = {
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -463,7 +461,7 @@ export type UserUpdateWithoutOperationsInput = {
 
 export type UserUncheckedUpdateWithoutOperationsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  telegramId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWhitelisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -554,7 +552,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    telegramId: number
+    telegramId: string
     username: string | null
     isWhitelisted: boolean
     createdAt: Date
@@ -984,7 +982,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'Int'>
-  readonly telegramId: Prisma.FieldRef<"User", 'Int'>
+  readonly telegramId: Prisma.FieldRef<"User", 'String'>
   readonly username: Prisma.FieldRef<"User", 'String'>
   readonly isWhitelisted: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>

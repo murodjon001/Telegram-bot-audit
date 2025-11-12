@@ -522,10 +522,6 @@ export type OperationUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.OperationScalarWhereInput | Prisma.OperationScalarWhereInput[]
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type EnumCurrencyFieldUpdateOperationsInput = {
   set?: $Enums.Currency
 }

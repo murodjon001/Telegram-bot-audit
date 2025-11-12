@@ -7,10 +7,10 @@ async function main() {
 
   // Superuser yaratish
   await prisma.user.upsert({
-    where: { telegramId: 929064950 }, // test uchun unikal ID
+    where: { telegramId: '929064950' }, // test uchun unikal ID
     update: {},
     create: {
-      telegramId: 929064950,
+      telegramId: '929064950',
       username: 'superadmin',
       isWhitelisted: true,
       isSuperUser: true,
@@ -19,24 +19,12 @@ async function main() {
 
   // Oddiy whitelisted user
   await prisma.user.upsert({
-    where: { telegramId: 111111111 },
+    where: { telegramId: '111111111' },
     update: {},
     create: {
-      telegramId: 111111111,
+      telegramId: '111111111',
       username: 'whitelisted_user',
       isWhitelisted: true,
-      isSuperUser: false,
-    },
-  });
-
-  // Oddiy foydalanuvchi
-  await prisma.user.upsert({
-    where: { telegramId: 222222222 },
-    update: {},
-    create: {
-      telegramId: 222222222,
-      username: 'normal_user',
-      isWhitelisted: false,
       isSuperUser: false,
     },
   });
