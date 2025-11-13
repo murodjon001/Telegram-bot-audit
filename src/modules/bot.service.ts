@@ -231,6 +231,8 @@ export class BotService {
           });
 
           await this.sendOperationToGroup(operation);
+
+          await this.sendToGoogleSheet(operation);
         } catch (err) {
           this.logger.error('❌ Matnli xabarni qayta ishlashda xatolik:', err);
           ctx.reply("❌ Shablon noto‘g‘ri yoki yetarli ma'lumot yo‘q.");
@@ -420,6 +422,34 @@ export class BotService {
       this.logger.log(`📩 Operatsiya guruhga yuborildi (${this.groupId})`);
     } catch (err) {
       this.logger.error('❌ Guruhga xabar yuborishda xatolik:', err);
+    }
+  }
+
+  private async sendToGoogleSheet(op: any) {
+    try {
+      const sheetWebhook = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+      if (!sheetWebhook) {
+        this.logger.warn('⚠️ GOOGLE_SHEET_WEBHOOK_URL topilmadi');
+        return;
+      }
+
+      const payload = {
+        senderLocation: op.senderLocation,
+        receiverLocation: op.receiverLocation,
+        currency: op.currency,
+        amount: op.amount,
+      };
+
+      const response = await fetch(sheetWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await response.text(); // body’ni o‘qish
+      this.logger.log(`📊 Maʼlumot Google Sheetʼga yuborildi, javob: ${text}`);
+    } catch (err) {
+      this.logger.error('❌ Google Sheetʼga yuborishda xatolik:', err);
     }
   }
 }
